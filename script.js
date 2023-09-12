@@ -62,6 +62,12 @@ class Calculator {
     this.currentOperand = computation.toString();
     this.operation = undefined;
     this.previousOperand = '';
+  
+    // Limpe também os operandos e a operação atual
+    setTimeout(() => {
+      this.clear();
+      this.updateDisplay();
+    }, 1000); // 1000 milissegundos (1 segundo) de atraso antes de limpar automaticamente
   }
   
 
@@ -97,6 +103,7 @@ class Calculator {
     previousOperandTextElement.innerText += `\n${historyText}`;
   }
   }
+
 
 
 const numberButtons = document.querySelectorAll('[data-number]')
