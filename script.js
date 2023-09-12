@@ -3,6 +3,7 @@ class Calculator {
     this.previousOperandTextElement = previousOperandTextElement
     this.currentOperandTextElement = currentOperandTextElement
     this.clear()
+    this.operationHistory = []; // Adicione esta linha para criar a variável de histórico
   }
 
   clear() {
@@ -16,9 +17,15 @@ class Calculator {
   }
 
   appendNumber(number) {
-    if (number === '.' && this.currentOperand.includes('.')) return
-    this.currentOperand = this.currentOperand.toString() + number.toString()
+    if (number === '.' && this.currentOperand.includes('.')) return;
+  if (number === '-' && this.currentOperand === '') {
+    this.currentOperand = '-';
+  } else if (number === '-' && this.currentOperand !== '') {
+    return; // Evitar múltiplos sinais de menos
+  } else {
+    this.currentOperand = this.currentOperand.toString() + number.toString();
   }
+}
 
   chooseOperation(operation) {
     if (this.currentOperand === '') return
@@ -31,30 +38,32 @@ class Calculator {
   }
 
   compute() {
-    let computation
-    const prev = parseFloat(this.previousOperand)
-    const current = parseFloat(this.currentOperand)
-    if (isNaN(prev) || isNaN(current)) return
+    let computation;
+    const prev = parseFloat(this.previousOperand);
+    const current = parseFloat(this.currentOperand);
+    if (isNaN(prev) || isNaN(current)) return;
     switch (this.operation) {
       case '+':
-        computation = prev + current
-        break
+        computation = prev + current;
+        break;
       case '-':
-        computation = prev - current
-        break
+        computation = prev - current;
+        break;
       case '*':
-        computation = prev * current
-        break
+        computation = prev * current;
+        break;
       case '÷':
-        computation = prev / current
-        break
+        computation = prev / current;
+        break;
       default:
-        return
+        return;
     }
-    this.currentOperand = computation
-    this.operation = undefined
-    this.previousOperand = ''
+    this.operationHistory.push(`${this.getDisplayNumber(prev)} ${this.operation} ${this.getDisplayNumber(current)} = ${this.getDisplayNumber(computation)}`);
+    this.currentOperand = computation.toString();
+    this.operation = undefined;
+    this.previousOperand = '';
   }
+  
 
   getDisplayNumber(number) {
     const stringNumber = number.toString()
@@ -75,15 +84,19 @@ class Calculator {
 
   updateDisplay() {
     this.currentOperandTextElement.innerText =
-      this.getDisplayNumber(this.currentOperand)
+      this.getDisplayNumber(this.currentOperand);
     if (this.operation != null) {
       this.previousOperandTextElement.innerText =
-        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
     } else {
-      this.previousOperandTextElement.innerText = ''
+      this.previousOperandTextElement.innerText = '';
     }
+  
+    // Adicione o histórico de operações na parte superior
+    const historyText = this.operationHistory.join('\n');
+    previousOperandTextElement.innerText += `\n${historyText}`;
   }
-}
+  }
 
 
 const numberButtons = document.querySelectorAll('[data-number]')
