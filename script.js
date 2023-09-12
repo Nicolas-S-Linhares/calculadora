@@ -1,9 +1,10 @@
 class Calculator {
   constructor(previousOperandTextElement, currentOperandTextElement) {
-    this.previousOperandTextElement = previousOperandTextElement
-    this.currentOperandTextElement = currentOperandTextElement
-    this.clear()
-    this.operationHistory = []; // Adicione esta linha para criar a variável de histórico
+    this.previousOperandTextElement = previousOperandTextElement;
+    this.currentOperandTextElement = currentOperandTextElement;
+    this.clear();
+    this.operationHistory = []; // Variável para armazenar o histórico de operações
+    this.previousCalculationComplete = true; // Variável para rastrear se o cálculo anterior foi concluído
   }
 
   clear() {
@@ -38,6 +39,9 @@ class Calculator {
   }
 
   compute() {
+    if (!this.previousCalculationComplete) {
+      return; // Não permita cálculos consecutivos sem pressionar "="
+    }
     let computation;
     const prev = parseFloat(this.previousOperand);
     const current = parseFloat(this.currentOperand);
@@ -62,12 +66,7 @@ class Calculator {
     this.currentOperand = computation.toString();
     this.operation = undefined;
     this.previousOperand = '';
-  
-    // Limpe também os operandos e a operação atual
-    setTimeout(() => {
-      this.clear();
-      this.updateDisplay();
-    }, 1000); // 1000 milissegundos (1 segundo) de atraso antes de limpar automaticamente
+    this.previousCalculationComplete = false;
   }
   
 
@@ -101,6 +100,9 @@ class Calculator {
     // Adicione o histórico de operações na parte superior
     const historyText = this.operationHistory.join('\n');
     previousOperandTextElement.innerText += `\n${historyText}`;
+  
+    // Defina a variável previousCalculationComplete como verdadeira
+    this.previousCalculationComplete = true;
   }
   }
 
